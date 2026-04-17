@@ -1,15 +1,19 @@
+"use client";
+import { useT } from "../lang-context";
+
 export default function DriverSupportPage() {
+  const { t } = useT();
   return (
     <div>
       <div style={{ marginBottom: 24 }}>
-        <h1 style={{ margin: "0 0 4px", fontSize: 22, fontWeight: 700, color: "#0f172a" }}>Driver Support & Info</h1>
-        <p style={{ margin: 0, color: "#64748b", fontSize: 14 }}>Up-to-date information and resources for Little Ride Ethiopia drivers</p>
+        <h1 style={{ margin: "0 0 4px", fontSize: 22, fontWeight: 700, color: "#0f172a" }}>{t.driverSupport.title}</h1>
+        <p style={{ margin: 0, color: "#64748b", fontSize: 14 }}>{t.driverSupport.subtitle}</p>
       </div>
 
       {/* Pricing */}
       <div className="section-card">
-        <h2 style={{ margin: "0 0 4px", fontSize: 16, fontWeight: 700, color: "#1e293b", display: "flex", alignItems: "center", gap: 8 }}>💰 Pricing Information</h2>
-        <p style={{ margin: "0 0 20px", fontSize: 13, color: "#64748b" }}>All fares in ETB. Retail = standard app fare · Corporate = business account fare.</p>
+        <h2 style={{ margin: "0 0 4px", fontSize: 16, fontWeight: 700, color: "#1e293b", display: "flex", alignItems: "center", gap: 8 }}>{t.driverSupport.pricing}</h2>
+        <p style={{ margin: "0 0 20px", fontSize: 13, color: "#64748b" }}>{t.driverSupport.pricingSubtitle}</p>
 
         {/* Pricing table component */}
         {([
@@ -114,9 +118,9 @@ export default function DriverSupportPage() {
             <table style={{ width: "100%", borderCollapse: "collapse", background: "#fff" }}>
               <thead>
                 <tr style={{ background: `${vehicle.color}10` }}>
-                  <th style={{ padding: "8px 14px", textAlign: "left", fontSize: 12, fontWeight: 700, color: vehicle.color, width: "50%", borderBottom: `1px solid ${vehicle.color}20` }}>Rate</th>
-                  <th style={{ padding: "8px 14px", textAlign: "right", fontSize: 12, fontWeight: 700, color: vehicle.color, borderBottom: `1px solid ${vehicle.color}20` }}>Retail (ETB)</th>
-                  <th style={{ padding: "8px 14px", textAlign: "right", fontSize: 12, fontWeight: 700, color: vehicle.color, borderBottom: `1px solid ${vehicle.color}20` }}>Corporate (ETB)</th>
+                  <th style={{ padding: "8px 14px", textAlign: "left", fontSize: 12, fontWeight: 700, color: vehicle.color, width: "50%", borderBottom: `1px solid ${vehicle.color}20` }}>{t.driverSupport.rate}</th>
+                  <th style={{ padding: "8px 14px", textAlign: "right", fontSize: 12, fontWeight: 700, color: vehicle.color, borderBottom: `1px solid ${vehicle.color}20` }}>{t.driverSupport.retail}</th>
+                  <th style={{ padding: "8px 14px", textAlign: "right", fontSize: 12, fontWeight: 700, color: vehicle.color, borderBottom: `1px solid ${vehicle.color}20` }}>{t.driverSupport.corporate}</th>
                 </tr>
               </thead>
               <tbody>
@@ -137,7 +141,7 @@ export default function DriverSupportPage() {
       {/* Fuel Updates */}
       <div className="section-card">
         <h2 style={{ margin: "0 0 16px", fontSize: 16, fontWeight: 700, color: "#1e293b", display: "flex", alignItems: "center", gap: 8 }}>
-          ⛽ Fuel Updates
+          {t.driverSupport.fuel}
         </h2>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12, marginBottom: 14 }}>
           {[
@@ -161,7 +165,7 @@ export default function DriverSupportPage() {
       {/* Road Conditions */}
       <div className="section-card">
         <h2 style={{ margin: "0 0 16px", fontSize: 16, fontWeight: 700, color: "#1e293b", display: "flex", alignItems: "center", gap: 8 }}>
-          🛣️ Road Conditions & Alerts
+          {t.driverSupport.road}
         </h2>
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           {[
@@ -186,7 +190,7 @@ export default function DriverSupportPage() {
       {/* Driver Tips */}
       <div className="section-card">
         <h2 style={{ margin: "0 0 16px", fontSize: 16, fontWeight: 700, color: "#1e293b", display: "flex", alignItems: "center", gap: 8 }}>
-          💡 Driver Tips & Best Practices
+          {t.driverSupport.tips}
         </h2>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 12 }}>
           {[
@@ -209,7 +213,7 @@ export default function DriverSupportPage() {
       {/* Emergency Contacts */}
       <div className="section-card">
         <h2 style={{ margin: "0 0 16px", fontSize: 16, fontWeight: 700, color: "#1e293b", display: "flex", alignItems: "center", gap: 8 }}>
-          📞 Emergency & Support Contacts
+          {t.driverSupport.contacts}
         </h2>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 12 }}>
           {[

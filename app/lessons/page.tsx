@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { useT } from "../lang-context";
 
 const CATEGORY_COLORS: Record<string, { bg: string; color: string; icon: string }> = {
   "Customer Relations": { bg: "#fdf4ff", color: "#9333ea", icon: "💬" },
@@ -246,6 +247,7 @@ function AddLessonModal({ onSave, onClose }: {
   onSave: (a: Article) => void;
   onClose: () => void;
 }) {
+  const { t } = useT();
   const [form, setForm] = useState({
     title: "", category: "Customer Relations", author: "", tags: "", content: "",
   });
@@ -274,8 +276,8 @@ function AddLessonModal({ onSave, onClose }: {
         {/* Header */}
         <div style={{ padding: "18px 24px 14px", borderBottom: "1px solid #f1f5f9", display: "flex", justifyContent: "space-between", alignItems: "center", position: "sticky", top: 0, background: "#fff", zIndex: 1 }}>
           <div>
-            <div style={{ fontWeight: 700, fontSize: 17, color: "#0f172a" }}>📚 Add Lesson Learned</div>
-            <div style={{ fontSize: 12, color: "#94a3b8", marginTop: 2 }}>Share your operational knowledge with the team</div>
+            <div style={{ fontWeight: 700, fontSize: 17, color: "#0f172a" }}>{t.lessons.modalTitle}</div>
+            <div style={{ fontSize: 12, color: "#94a3b8", marginTop: 2 }}>{t.lessons.modalSubtitle}</div>
           </div>
           <button onClick={onClose} style={{ background: "#f1f5f9", border: "none", borderRadius: 8, width: 32, height: 32, cursor: "pointer", fontSize: 18, color: "#64748b" }}>×</button>
         </div>
@@ -283,7 +285,7 @@ function AddLessonModal({ onSave, onClose }: {
         <form onSubmit={handleSubmit} style={{ padding: "20px 24px", display: "flex", flexDirection: "column", gap: 14 }}>
           {/* Title */}
           <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-            <label style={{ fontSize: 12, fontWeight: 600, color: "#64748b" }}>Title *</label>
+            <label style={{ fontSize: 12, fontWeight: 600, color: "#64748b" }}>{t.lessons.formTitle}</label>
             <input required value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))}
               placeholder="e.g. How to Handle Duplicate Payments" style={inputStyle} />
           </div>
@@ -291,14 +293,14 @@ function AddLessonModal({ onSave, onClose }: {
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
             {/* Category */}
             <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "#64748b" }}>Category *</label>
+              <label style={{ fontSize: 12, fontWeight: 600, color: "#64748b" }}>{t.lessons.formCategory}</label>
               <select required value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))} style={inputStyle}>
                 {CATEGORIES.map(c => <option key={c}>{c}</option>)}
               </select>
             </div>
             {/* Author */}
             <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "#64748b" }}>Your Name *</label>
+              <label style={{ fontSize: 12, fontWeight: 600, color: "#64748b" }}>{t.lessons.formAuthor}</label>
               <input required value={form.author} onChange={e => setForm(f => ({ ...f, author: e.target.value }))}
                 placeholder="e.g. Selam Tadesse" style={inputStyle} />
             </div>
@@ -306,16 +308,16 @@ function AddLessonModal({ onSave, onClose }: {
 
           {/* Tags */}
           <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-            <label style={{ fontSize: 12, fontWeight: 600, color: "#64748b" }}>Tags <span style={{ color: "#94a3b8", fontWeight: 400 }}>(comma separated)</span></label>
+            <label style={{ fontSize: 12, fontWeight: 600, color: "#64748b" }}>{t.lessons.formTags} <span style={{ color: "#94a3b8", fontWeight: 400 }}>{t.lessons.formTagsHint}</span></label>
             <input value={form.tags} onChange={e => setForm(f => ({ ...f, tags: e.target.value }))}
               placeholder="e.g. payment, refund, Telebirr" style={inputStyle} />
           </div>
 
           {/* Content */}
           <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-            <label style={{ fontSize: 12, fontWeight: 600, color: "#64748b" }}>Content *</label>
+            <label style={{ fontSize: 12, fontWeight: 600, color: "#64748b" }}>{t.lessons.formContent}</label>
             <div style={{ background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: 8, padding: "10px 14px", fontSize: 12, color: "#64748b", marginBottom: 6, lineHeight: 1.7 }}>
-              💡 Use these section headings on their own line for rich formatting:<br />
+              {t.lessons.formHint}
               <strong>SUMMARY</strong> · <strong>STEPS</strong> · <strong>COMMON CAUSES</strong> · <strong>KEY INSIGHT</strong><br />
               Use <code>1. 2. 3.</code> for numbered steps and <code>-</code> for bullet points.
             </div>
@@ -327,11 +329,11 @@ function AddLessonModal({ onSave, onClose }: {
           <div style={{ display: "flex", gap: 10, justifyContent: "flex-end", paddingTop: 8, borderTop: "1px solid #f1f5f9" }}>
             <button type="button" onClick={onClose}
               style={{ padding: "9px 20px", borderRadius: 8, border: "1px solid #e2e8f0", background: "#fff", color: "#475569", fontWeight: 600, fontSize: 14, cursor: "pointer" }}>
-              Cancel
+              {t.lessons.cancel}
             </button>
             <button type="submit"
               style={{ padding: "9px 24px", borderRadius: 8, border: "none", background: "#fbbf24", color: "#78350f", fontWeight: 700, fontSize: 14, cursor: "pointer", boxShadow: "0 2px 8px rgba(251,191,36,0.25)" }}>
-              Publish Lesson
+              {t.lessons.publish}
             </button>
           </div>
         </form>
@@ -342,6 +344,7 @@ function AddLessonModal({ onSave, onClose }: {
 
 // ── Page ─────────────────────────────────────────────────────────────────────
 export default function LessonsPage() {
+  const { t } = useT();
   const [articles, setArticles] = useState<Article[]>(SEED_ARTICLES);
   const [hydrated, setHydrated] = useState(false);
   const [expanded, setExpanded] = useState<number | null>(null);
@@ -375,12 +378,12 @@ export default function LessonsPage() {
       {/* Header */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 24 }}>
         <div>
-          <h1 style={{ margin: "0 0 4px", fontSize: 22, fontWeight: 700, color: "#0f172a" }}>Lessons Learned</h1>
-          <p style={{ margin: 0, color: "#64748b", fontSize: 14 }}>Tacit knowledge captured from real operational experience at Little Ride Ethiopia</p>
+          <h1 style={{ margin: "0 0 4px", fontSize: 22, fontWeight: 700, color: "#0f172a" }}>{t.lessons.title}</h1>
+          <p style={{ margin: 0, color: "#64748b", fontSize: 14 }}>{t.lessons.subtitle}</p>
         </div>
         <button onClick={() => setShowModal(true)}
           style={{ background: "#fbbf24", color: "#78350f", border: "none", borderRadius: 9, padding: "10px 20px", fontWeight: 700, fontSize: 14, cursor: "pointer", display: "flex", alignItems: "center", gap: 8, boxShadow: "0 2px 8px rgba(251,191,36,0.3)", whiteSpace: "nowrap" }}>
-          <span style={{ fontSize: 16 }}>＋</span> Add Lesson
+          <span style={{ fontSize: 16 }}>＋</span> {t.lessons.addLesson}
         </button>
       </div>
 
@@ -412,9 +415,9 @@ export default function LessonsPage() {
 
       {/* Articles */}
       {!hydrated ? (
-        <div style={{ textAlign: "center", padding: 60, color: "#94a3b8", fontSize: 14 }}>Loading lessons...</div>
+        <div style={{ textAlign: "center", padding: 60, color: "#94a3b8", fontSize: 14 }}>{t.lessons.loading}</div>
       ) : filtered.length === 0 ? (
-        <div style={{ textAlign: "center", padding: 60, color: "#94a3b8", fontSize: 14 }}>No lessons in this category yet.</div>
+        <div style={{ textAlign: "center", padding: 60, color: "#94a3b8", fontSize: 14 }}>{t.lessons.noLessons}</div>
       ) : filtered.map(article => {
         const catStyle = CATEGORY_COLORS[article.category] ?? { bg: "#f8fafc", color: "#475569", icon: "📌" };
         const isOpen = expanded === article.id;
@@ -433,7 +436,7 @@ export default function LessonsPage() {
                   <span style={{ background: catStyle.bg, color: catStyle.color, borderRadius: 6, padding: "3px 10px", fontSize: 12, fontWeight: 700, display: "flex", alignItems: "center", gap: 4 }}>
                     {catStyle.icon} {article.category}
                   </span>
-                  <span style={{ fontSize: 12, color: "#94a3b8" }}>by <strong style={{ color: "#64748b" }}>{article.author}</strong></span>
+                  <span style={{ fontSize: 12, color: "#94a3b8" }}>{t.lessons.by} <strong style={{ color: "#64748b" }}>{article.author}</strong></span>
                   <span style={{ fontSize: 12, color: "#94a3b8" }}>·</span>
                   <span style={{ fontSize: 12, color: "#94a3b8" }}>{article.date}</span>
                 </div>

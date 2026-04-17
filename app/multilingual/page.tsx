@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { useT } from "../lang-context";
 
 const GLOSSARY = [
   { en: "Trip Adjustment", am: "ጉዞ ማስተካከያ", category: "Operations", phonetic: "Guzo Mastekakiya" },
@@ -36,6 +37,7 @@ const PHRASES = [
 const CATEGORIES = ["All", "Operations", "Finance", "Technical", "Support"];
 
 export default function MultilingualPage() {
+  const { t } = useT();
   const [catFilter, setCatFilter] = useState("All");
   const [search, setSearch] = useState("");
 
@@ -48,18 +50,18 @@ export default function MultilingualPage() {
   return (
     <div>
       <div style={{ marginBottom: 24 }}>
-        <h1 style={{ margin: "0 0 4px", fontSize: 22, fontWeight: 700, color: "#0f172a" }}>Multilingual Support</h1>
-        <p style={{ margin: 0, color: "#64748b", fontSize: 14 }}>English ↔ Amharic glossary and support phrases for Little Ride Ethiopia agents</p>
+        <h1 style={{ margin: "0 0 4px", fontSize: 22, fontWeight: 700, color: "#0f172a" }}>{t.multilingual.title}</h1>
+        <p style={{ margin: 0, color: "#64748b", fontSize: 14 }}>{t.multilingual.subtitle}</p>
       </div>
 
       {/* Info Banner */}
       <div style={{ background: "#f0fdf4", border: "1px solid #bbf7d0", borderRadius: 10, padding: "12px 18px", marginBottom: 24, fontSize: 13, color: "#166534" }}>
-        🌍 Little Ride Ethiopia serves customers across Addis Ababa who primarily communicate in <strong>Amharic</strong>. Agents are encouraged to use Amharic in all customer interactions for better satisfaction.
+        {t.multilingual.banner}
       </div>
 
       {/* Common Phrases */}
       <div className="section-card" style={{ marginBottom: 24 }}>
-        <h2 style={{ margin: "0 0 16px", fontSize: 16, fontWeight: 700, color: "#1e293b" }}>📢 Common Support Phrases</h2>
+        <h2 style={{ margin: "0 0 16px", fontSize: 16, fontWeight: 700, color: "#1e293b" }}>{t.multilingual.phrases}</h2>
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           {PHRASES.map((p, i) => (
             <div key={i} style={{ background: "#f8fafc", borderRadius: 10, padding: "12px 16px", border: "1px solid #e2e8f0" }}>
@@ -76,11 +78,11 @@ export default function MultilingualPage() {
 
       {/* Glossary */}
       <div className="section-card">
-        <h2 style={{ margin: "0 0 16px", fontSize: 16, fontWeight: 700, color: "#1e293b" }}>📖 Terminology Glossary</h2>
+        <h2 style={{ margin: "0 0 16px", fontSize: 16, fontWeight: 700, color: "#1e293b" }}>{t.multilingual.glossary}</h2>
 
         <div style={{ display: "flex", gap: 10, marginBottom: 16, flexWrap: "wrap" }}>
           <input
-            placeholder="Search terms..."
+            placeholder={t.multilingual.searchPlaceholder}
             value={search}
             onChange={e => setSearch(e.target.value)}
             style={{ width: 220 }}
@@ -97,10 +99,10 @@ export default function MultilingualPage() {
           <table>
             <thead>
               <tr>
-                <th>English</th>
-                <th>አማርኛ (Amharic)</th>
-                <th>Phonetic</th>
-                <th>Category</th>
+                <th>{t.multilingual.colEnglish}</th>
+                <th>{t.multilingual.colAmharic}</th>
+                <th>{t.multilingual.colPhonetic}</th>
+                <th>{t.multilingual.colCategory}</th>
               </tr>
             </thead>
             <tbody>
@@ -115,7 +117,7 @@ export default function MultilingualPage() {
                 </tr>
               ))}
               {filtered.length === 0 && (
-                <tr><td colSpan={4} style={{ textAlign: "center", color: "#94a3b8", padding: 24 }}>No terms found.</td></tr>
+                <tr><td colSpan={4} style={{ textAlign: "center", color: "#94a3b8", padding: 24 }}>{t.multilingual.noTerms}</td></tr>
               )}
             </tbody>
           </table>

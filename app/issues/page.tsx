@@ -4,11 +4,10 @@ import {
   ISSUES, ISSUE_TYPES, STATUS_FILTER, VEHICLE_TYPES, DEPARTMENTS, SOURCES, RAISED_BY,
   Issue, IssueStatus, RaisedBy,
 } from "../data";
+import { useT } from "../lang-context";
 
 const STORAGE_KEY = "kms_issues_v1";
 
-// Always init with seed data (same on server + client = no hydration mismatch).
-// After mount, useEffect overwrites with localStorage if available.
 function usePersistedIssues() {
   const [issues, setIssuesState] = useState<Issue[]>(ISSUES);
   const [hydrated, setHydrated] = useState(false);
@@ -55,10 +54,8 @@ const EMPTY: Omit<Issue, "id"> = {
   dueDate: "", agentData: "", source: "Call Center", comment: "",
 };
 
-// ── Reusable form field ──────────────────────────────────────────────────────
 function Field({ label, fieldKey, type, opts, form, setForm }: {
-  label: string;
-  fieldKey: string;
+  label: string; fieldKey: string;
   type: "text" | "select" | "date" | "textarea";
   opts?: string[];
   form: Record<string, unknown>;
@@ -66,10 +63,7 @@ function Field({ label, fieldKey, type, opts, form, setForm }: {
 }) {
   const val = (form[fieldKey] ?? "") as string;
   const set = (v: string) => setForm({ ...form, [fieldKey]: v });
-  const base: React.CSSProperties = {
-    padding: "7px 10px", borderRadius: 7, border: "1px solid #e2e8f0",
-    fontSize: 13, width: "100%", boxSizing: "border-box",
-  };
+  const base: React.CSSProperties = { padding: "7px 10px", borderRadius: 7, border: "1px solid #e2e8f0", fontSize: 13, width: "100%", boxSizing: "border-box" };
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
       <label style={{ fontSize: 12, fontWeight: 600, color: "#64748b" }}>{label}</label>
@@ -87,19 +81,18 @@ function Field({ label, fieldKey, type, opts, form, setForm }: {
   );
 }
 
-// ── Modal ────────────────────────────────────────────────────────────────────
-function IssueModal({ title, subtitle, form, setForm, onSave, onClose, isEdit }: {
+function IssueModal({ title, subtitle, form, setForm, onSave, onClose, isEdit, saveLabel, cancelLabel, editLabel, statusLabel }: {
   title: string; subtitle: string;
   form: Record<string, unknown>;
   setForm: (f: Record<string, unknown>) => void;
   onSave: (e: React.FormEvent) => void;
   onClose: () => void;
   isEdit?: boolean;
+  saveLabel: string; cancelLabel: string; editLabel: string; statusLabel: string;
 }) {
   return (
     <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.45)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
       <div style={{ background: "#fff", borderRadius: 16, width: "100%", maxWidth: 700, maxHeight: "90vh", overflowY: "auto", boxShadow: "0 20px 60px rgba(0,0,0,0.2)" }}>
-        {/* Header */}
         <div style={{ padding: "18px 24px 14px", borderBottom: "1px solid #f1f5f9", display: "flex", justifyContent: "space-between", alignItems: "center", position: "sticky", top: 0, background: "#fff", zIndex: 1 }}>
           <div>
             <div style={{ fontWeight: 700, fontSize: 17, color: "#0f172a" }}>{title}</div>
@@ -111,14 +104,13 @@ function IssueModal({ title, subtitle, form, setForm, onSave, onClose, isEdit }:
         <form onSubmit={onSave} style={{ padding: "20px 24px" }}>
           {isEdit && (
             <div style={{ background: "#fffbeb", border: "1px solid #fde68a", borderRadius: 8, padding: "10px 14px", marginBottom: 16, fontSize: 13, color: "#92400e" }}>
-              ✏️ Editing issue <strong>#{form.id as string}</strong> — update any field and save.
+              ✏️ {editLabel} <strong>#{form.id as string}</strong>
             </div>
           )}
 
-          {/* Status pill picker — shown at top only in edit mode */}
           {isEdit && (
             <div style={{ marginBottom: 16 }}>
-              <label style={{ fontSize: 12, fontWeight: 600, color: "#64748b", display: "block", marginBottom: 6 }}>Issue Status</label>
+              <label style={{ fontSize: 12, fontWeight: 600, color: "#64748b", display: "block", marginBottom: 6 }}>{statusLabel}</label>
               <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                 {ALL_STATUSES.map(s => {
                   const ss = STATUS_STYLE[s];
@@ -145,7 +137,7 @@ function IssueModal({ title, subtitle, form, setForm, onSave, onClose, isEdit }:
             <Field label="Date" fieldKey="date" type="date" form={form} setForm={setForm} />
             <Field label="Raised By" fieldKey="raisedBy" type="select" opts={RAISED_BY} form={form} setForm={setForm} />
             <Field label="Phone Number" fieldKey="phone" type="text" form={form} setForm={setForm} />
-            <Field label="Issue Type" fieldKey="issueType" type="select" opts={ISSUE_TYPES.filter(t => t !== "All")} form={form} setForm={setForm} />
+            <Field label="Issue Type" fieldKey="issueType" type="select" opts={ISSUE_TYPES.filter(x => x !== "All")} form={form} setForm={setForm} />
             <Field label="Vehicle Type" fieldKey="vehicleType" type="select" opts={VEHICLE_TYPES} form={form} setForm={setForm} />
             <Field label="Plate No." fieldKey="plateNo" type="text" form={form} setForm={setForm} />
             <Field label="Trip ID" fieldKey="tripId" type="text" form={form} setForm={setForm} />
@@ -164,11 +156,11 @@ function IssueModal({ title, subtitle, form, setForm, onSave, onClose, isEdit }:
           <div style={{ display: "flex", gap: 10, justifyContent: "flex-end", marginTop: 20, paddingTop: 16, borderTop: "1px solid #f1f5f9" }}>
             <button type="button" onClick={onClose}
               style={{ padding: "9px 20px", borderRadius: 8, border: "1px solid #e2e8f0", background: "#fff", color: "#475569", fontWeight: 600, fontSize: 14, cursor: "pointer" }}>
-              Cancel
+              {cancelLabel}
             </button>
             <button type="submit"
               style={{ padding: "9px 24px", borderRadius: 8, border: "none", background: isEdit ? "#3b82f6" : "#fbbf24", color: isEdit ? "#fff" : "#78350f", fontWeight: 700, fontSize: 14, cursor: "pointer" }}>
-              {isEdit ? "Save Changes" : "Save Issue"}
+              {saveLabel}
             </button>
           </div>
         </form>
@@ -177,8 +169,8 @@ function IssueModal({ title, subtitle, form, setForm, onSave, onClose, isEdit }:
   );
 }
 
-// ── Page ─────────────────────────────────────────────────────────────────────
 export default function IssuesPage() {
+  const { t } = useT();
   const [issues, setIssues, hydrated] = usePersistedIssues();
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState("All");
@@ -200,16 +192,12 @@ export default function IssuesPage() {
       (statusFilter === "All" || i.issueStatus === statusFilter);
   });
 
-  // Inline status change
   function handleStatusChange(id: string, newStatus: IssueStatus) {
     setIssues(prev => prev.map(i =>
-      i.id === id
-        ? { ...i, issueStatus: newStatus, dueDate: (newStatus === "Resolved" || newStatus === "Closed") ? "closed" : i.dueDate }
-        : i
+      i.id === id ? { ...i, issueStatus: newStatus, dueDate: (newStatus === "Resolved" || newStatus === "Closed") ? "closed" : i.dueDate } : i
     ));
   }
 
-  // Open edit — always look up the LIVE issue from state by ID
   function openEdit(id: string) {
     const live = issues.find(i => i.id === id);
     if (!live) return;
@@ -234,61 +222,58 @@ export default function IssuesPage() {
   }
 
   const editIssue = editId ? issues.find(i => i.id === editId) : null;
+  const cols = [t.issues.cols.id, t.issues.cols.date, t.issues.cols.raisedBy, t.issues.cols.phone, t.issues.cols.issueType, t.issues.cols.vehicleType, t.issues.cols.plateNo, t.issues.cols.tripId, t.issues.cols.firstResponder, t.issues.cols.issueStatus, t.issues.cols.escalatedTo, t.issues.cols.department, t.issues.cols.dueDate, t.issues.cols.agentData, t.issues.cols.source, t.issues.cols.comment, ""];
 
   return (
     <div>
-      {/* Header */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20 }}>
         <div>
-          <h1 style={{ margin: "0 0 4px", fontSize: 22, fontWeight: 700, color: "#0f172a" }}>Support Issues Database</h1>
-          <p style={{ margin: 0, color: "#64748b", fontSize: 14 }}>Ethiopia Support Dashboard 2026 — click any row to edit · change status inline</p>
+          <h1 style={{ margin: "0 0 4px", fontSize: 22, fontWeight: 700, color: "#0f172a" }}>{t.issues.title}</h1>
+          <p style={{ margin: 0, color: "#64748b", fontSize: 14 }}>{t.issues.subtitle}</p>
         </div>
         <button onClick={() => setShowNew(true)}
           style={{ background: "#fbbf24", color: "#78350f", border: "none", borderRadius: 9, padding: "10px 20px", fontWeight: 700, fontSize: 14, cursor: "pointer", display: "flex", alignItems: "center", gap: 8, boxShadow: "0 2px 8px rgba(251,191,36,0.3)" }}>
-          <span style={{ fontSize: 18 }}>＋</span> Log New Issue
+          <span style={{ fontSize: 18 }}>＋</span> {t.issues.logNew}
         </button>
       </div>
 
-      {/* Filters */}
       <div style={{ display: "flex", gap: 10, marginBottom: 12, flexWrap: "wrap", alignItems: "center" }}>
-        <input placeholder="🔍  Search ID, phone, plate, trip, keyword..."
+        <input placeholder={t.issues.searchPlaceholder}
           value={search} onChange={e => setSearch(e.target.value)}
           style={{ width: 300, padding: "8px 12px", borderRadius: 8, border: "1px solid #e2e8f0", fontSize: 13 }} />
         <select value={typeFilter} onChange={e => setTypeFilter(e.target.value)}
           style={{ padding: "8px 12px", borderRadius: 8, border: "1px solid #e2e8f0", fontSize: 13 }}>
-          {ISSUE_TYPES.map(t => <option key={t}>{t}</option>)}
+          {ISSUE_TYPES.map(x => <option key={x}>{x}</option>)}
         </select>
         <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)}
           style={{ padding: "8px 12px", borderRadius: 8, border: "1px solid #e2e8f0", fontSize: 13 }}>
           {STATUS_FILTER.map(s => <option key={s}>{s}</option>)}
         </select>
         <span style={{ fontSize: 13, color: "#64748b", marginLeft: "auto" }}>
-          Showing <strong>{filtered.length}</strong> of {issues.length} issues
+          {t.issues.showing} <strong>{filtered.length}</strong> {t.issues.of} {issues.length} {t.issues.issuesCount}
         </span>
       </div>
 
-      {/* Legend */}
       <div style={{ display: "flex", gap: 10, marginBottom: 12, flexWrap: "wrap" }}>
-        <span style={{ fontSize: 12, color: "#64748b", background: "#f1f5f9", borderRadius: 6, padding: "3px 10px" }}>🖱 Click row → Edit all fields</span>
-        <span style={{ fontSize: 12, color: "#64748b", background: "#f1f5f9", borderRadius: 6, padding: "3px 10px" }}>⚡ Status dropdown → Change status inline</span>
+        <span style={{ fontSize: 12, color: "#64748b", background: "#f1f5f9", borderRadius: 6, padding: "3px 10px" }}>{t.issues.clickEdit}</span>
+        <span style={{ fontSize: 12, color: "#64748b", background: "#f1f5f9", borderRadius: 6, padding: "3px 10px" }}>{t.issues.statusInline}</span>
       </div>
 
-      {/* Table — only rendered after localStorage is loaded */}
       {!hydrated ? (
-        <div style={{ textAlign: "center", padding: 60, color: "#94a3b8", fontSize: 14 }}>Loading issues...</div>
+        <div style={{ textAlign: "center", padding: 60, color: "#94a3b8", fontSize: 14 }}>{t.issues.loading}</div>
       ) : (
         <div style={{ background: "#fff", borderRadius: 12, boxShadow: "0 1px 4px rgba(0,0,0,0.07)", border: "1px solid #f1f5f9", overflowX: "auto" }}>
           <table style={{ borderCollapse: "collapse", width: "100%", fontSize: 12 }}>
             <thead>
               <tr style={{ background: "#f8fafc" }}>
-                {["#","Date","Raised By","Phone","Issue Type","Vehicle Type","Plate No.","Trip ID","1st Responder","Issue Status","Escalated To","Department","Due Date","Agent Data","Source","Comment",""].map((h, i) => (
+                {cols.map((h, i) => (
                   <th key={i} style={{ padding: "9px 10px", textAlign: "left", fontWeight: 600, color: "#64748b", fontSize: 11, textTransform: "uppercase", letterSpacing: "0.04em", borderBottom: "1px solid #e2e8f0", whiteSpace: "nowrap" }}>{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {filtered.length === 0 ? (
-                <tr><td colSpan={17} style={{ textAlign: "center", color: "#94a3b8", padding: 32 }}>No issues match your filters.</td></tr>
+                <tr><td colSpan={17} style={{ textAlign: "center", color: "#94a3b8", padding: 32 }}>{t.issues.noMatch}</td></tr>
               ) : filtered.map(issue => {
                 const ss = STATUS_STYLE[issue.issueStatus] ?? STATUS_STYLE.Open;
                 const rs = RAISED_STYLE[issue.raisedBy];
@@ -310,22 +295,13 @@ export default function IssuesPage() {
                     <td style={{ padding: "8px 10px", fontFamily: "monospace", fontSize: 11, color: "#64748b" }} onClick={() => openEdit(issue.id)}>{issue.plateNo || "—"}</td>
                     <td style={{ padding: "8px 10px", fontFamily: "monospace", fontSize: 11, color: "#64748b" }} onClick={() => openEdit(issue.id)}>{issue.tripId || "—"}</td>
                     <td style={{ padding: "8px 10px", whiteSpace: "nowrap", color: "#334155" }} onClick={() => openEdit(issue.id)}>{issue.firstResponder}</td>
-
-                    {/* Inline status dropdown — stopPropagation so it doesn't open edit modal */}
                     <td style={{ padding: "6px 8px" }} onClick={e => e.stopPropagation()}>
                       <select value={issue.issueStatus}
                         onChange={e => handleStatusChange(issue.id, e.target.value as IssueStatus)}
-                        style={{
-                          background: ss.bg, color: ss.color,
-                          border: `1.5px solid ${ss.color}40`,
-                          borderRadius: 999, padding: "3px 8px",
-                          fontWeight: 700, fontSize: 11, cursor: "pointer",
-                          outline: "none", minWidth: 90, textAlign: "center",
-                        }}>
+                        style={{ background: ss.bg, color: ss.color, border: `1.5px solid ${ss.color}40`, borderRadius: 999, padding: "3px 8px", fontWeight: 700, fontSize: 11, cursor: "pointer", outline: "none", minWidth: 90, textAlign: "center" }}>
                         {ALL_STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
                       </select>
                     </td>
-
                     <td style={{ padding: "8px 10px", whiteSpace: "nowrap", color: "#475569" }} onClick={() => openEdit(issue.id)}>{issue.escalatedTo || "—"}</td>
                     <td style={{ padding: "8px 10px", whiteSpace: "nowrap", color: "#475569" }} onClick={() => openEdit(issue.id)}>{issue.department}</td>
                     <td style={{ padding: "8px 10px", whiteSpace: "nowrap", fontWeight: 500, color: issue.dueDate === "closed" ? "#16a34a" : "#dc2626" }} onClick={() => openEdit(issue.id)}>{issue.dueDate || "—"}</td>
@@ -334,13 +310,11 @@ export default function IssuesPage() {
                       <span style={{ background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: 6, padding: "2px 8px", fontSize: 11 }}>{issue.source}</span>
                     </td>
                     <td style={{ padding: "8px 10px", maxWidth: 220 }} onClick={() => openEdit(issue.id)}>
-                      <span title={issue.comment} style={{ display: "block", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: 220, color: "#475569" }}>
-                        {issue.comment}
-                      </span>
+                      <span title={issue.comment} style={{ display: "block", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: 220, color: "#475569" }}>{issue.comment}</span>
                     </td>
                     <td style={{ padding: "8px 8px" }} onClick={e => { e.stopPropagation(); openEdit(issue.id); }}>
                       <button style={{ background: "#eff6ff", border: "none", borderRadius: 6, padding: "4px 10px", color: "#3b82f6", fontWeight: 600, fontSize: 11, cursor: "pointer", whiteSpace: "nowrap" }}>
-                        ✏️ Edit
+                        ✏️ {t.issues.editBtn ?? "Edit"}
                       </button>
                     </td>
                   </tr>
@@ -351,28 +325,34 @@ export default function IssuesPage() {
         </div>
       )}
 
-      {/* Log New Issue Modal */}
       {showNew && (
         <IssueModal
-          title="Log New Issue"
-          subtitle="Fill in the details to add a new support issue"
+          title={t.issues.logTitle}
+          subtitle={t.issues.logSubtitle}
           form={newForm}
           setForm={setNewForm}
           onSave={handleNewSave}
           onClose={() => { setShowNew(false); setNewForm(EMPTY as unknown as Record<string, unknown>); }}
+          saveLabel={t.issues.saveIssue}
+          cancelLabel={t.issues.cancel}
+          editLabel=""
+          statusLabel=""
         />
       )}
 
-      {/* Edit Issue Modal */}
       {editId && editForm && editIssue && (
         <IssueModal
-          title={`Edit Issue #${editId}`}
+          title={`${t.issues.editTitle} #${editId}`}
           subtitle={`${editIssue.issueType} · ${editIssue.raisedBy} · ${editIssue.date}`}
           form={editForm}
           setForm={setEditForm}
           onSave={handleEditSave}
           onClose={() => { setEditId(null); setEditForm(null); }}
           isEdit
+          saveLabel={t.issues.saveChanges}
+          cancelLabel={t.issues.cancel}
+          editLabel={t.issues.editNote}
+          statusLabel={t.issues.cols.issueStatus}
         />
       )}
     </div>

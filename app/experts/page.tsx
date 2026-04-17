@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { useT } from "../lang-context";
 
 interface Expert {
   id: number;
@@ -220,6 +221,7 @@ const AVAIL_STYLE: Record<string, { bg: string; color: string; dot: string }> = 
 const DEPARTMENTS = ["All", "Customer Care", "Technical Support", "Finance", "Operations", "Supply"];
 
 export default function ExpertsPage() {
+  const { t } = useT();
   const [search, setSearch] = useState("");
   const [deptFilter, setDeptFilter] = useState("All");
   const [selected, setSelected] = useState<Expert | null>(null);
@@ -239,17 +241,17 @@ export default function ExpertsPage() {
       <div style={{ flex: 1, minWidth: 0 }}>
         {/* Header */}
         <div style={{ marginBottom: 24 }}>
-          <h1 style={{ margin: "0 0 4px", fontSize: 22, fontWeight: 700, color: "#0f172a" }}>Expert Locator</h1>
-          <p style={{ margin: 0, color: "#64748b", fontSize: 14 }}>Find the right person for any issue — Little Ride Ethiopia team directory</p>
+          <h1 style={{ margin: "0 0 4px", fontSize: 22, fontWeight: 700, color: "#0f172a" }}>{t.experts.title}</h1>
+          <p style={{ margin: 0, color: "#64748b", fontSize: 14 }}>{t.experts.subtitle}</p>
         </div>
 
         {/* Stats */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: 12, marginBottom: 20 }}>
           {[
-            { label: "Total Staff", value: EXPERTS.length, color: "#3b82f6" },
-            { label: "Available", value: EXPERTS.filter(e => e.availability === "Available").length, color: "#16a34a" },
-            { label: "Busy", value: EXPERTS.filter(e => e.availability === "Busy").length, color: "#ca8a04" },
-            { label: "Departments", value: Object.keys(DEPT_COLORS).length, color: "#9333ea" },
+            { label: t.experts.totalStaff, value: EXPERTS.length, color: "#3b82f6" },
+            { label: t.experts.available, value: EXPERTS.filter(e => e.availability === "Available").length, color: "#16a34a" },
+            { label: t.experts.busy, value: EXPERTS.filter(e => e.availability === "Busy").length, color: "#ca8a04" },
+            { label: t.experts.departments, value: Object.keys(DEPT_COLORS).length, color: "#9333ea" },
           ].map(s => (
             <div key={s.label} style={{ background: "#fff", borderRadius: 10, padding: "14px 16px", border: "1px solid #f1f5f9", boxShadow: "0 1px 3px rgba(0,0,0,0.06)", borderTop: `3px solid ${s.color}` }}>
               <div style={{ fontSize: 24, fontWeight: 700, color: s.color }}>{s.value}</div>
@@ -261,7 +263,7 @@ export default function ExpertsPage() {
         {/* Filters */}
         <div style={{ display: "flex", gap: 10, marginBottom: 16, flexWrap: "wrap", alignItems: "center" }}>
           <input
-            placeholder="🔍  Search by name, role, or expertise..."
+            placeholder={t.experts.searchPlaceholder}
             value={search} onChange={e => setSearch(e.target.value)}
             style={{ flex: 1, minWidth: 220, padding: "8px 12px", borderRadius: 8, border: "1px solid #e2e8f0", fontSize: 13 }}
           />
@@ -340,7 +342,7 @@ export default function ExpertsPage() {
           })}
           {filtered.length === 0 && (
             <div style={{ gridColumn: "1/-1", textAlign: "center", padding: 48, color: "#94a3b8", fontSize: 14 }}>
-              No experts match your search.
+              {t.experts.noExperts}
             </div>
           )}
         </div>
@@ -382,13 +384,13 @@ export default function ExpertsPage() {
             <div style={{ padding: "18px 22px", display: "flex", flexDirection: "column", gap: 16 }}>
               {/* Bio */}
               <div>
-                <div style={{ fontSize: 11, fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 6 }}>About</div>
+                <div style={{ fontSize: 11, fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 6 }}>{t.experts.about}</div>
                 <p style={{ margin: 0, fontSize: 13, color: "#475569", lineHeight: 1.65 }}>{selected.bio}</p>
               </div>
 
               {/* Expertise */}
               <div>
-                <div style={{ fontSize: 11, fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 8 }}>Areas of Expertise</div>
+                <div style={{ fontSize: 11, fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 8 }}>{t.experts.expertise}</div>
                 <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
                   {selected.expertise.map(x => (
                     <span key={x} style={{ background: dept.bg, color: dept.color, borderRadius: 6, padding: "3px 10px", fontSize: 12, fontWeight: 500 }}>{x}</span>
@@ -399,9 +401,9 @@ export default function ExpertsPage() {
               {/* Stats */}
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
                 {[
-                  { label: "Issues Resolved", value: selected.resolvedIssues.toLocaleString() },
-                  { label: "Years Exp.", value: `${selected.yearsExp} yrs` },
-                  { label: "Languages", value: selected.languages.length.toString() },
+                  { label: t.experts.resolved, value: selected.resolvedIssues.toLocaleString() },
+                  { label: t.experts.yearsExp, value: `${selected.yearsExp} yrs` },
+                  { label: t.experts.languages, value: selected.languages.length.toString() },
                 ].map(s => (
                   <div key={s.label} style={{ background: "#f8fafc", borderRadius: 8, padding: "10px 8px", textAlign: "center" }}>
                     <div style={{ fontSize: 16, fontWeight: 700, color: "#1e293b" }}>{s.value}</div>
@@ -412,7 +414,7 @@ export default function ExpertsPage() {
 
               {/* Languages */}
               <div>
-                <div style={{ fontSize: 11, fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 8 }}>Languages</div>
+                <div style={{ fontSize: 11, fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 8 }}>{t.experts.languages}</div>
                 <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
                   {selected.languages.map(l => (
                     <span key={l} style={{ background: "#f1f5f9", color: "#475569", borderRadius: 6, padding: "3px 10px", fontSize: 12 }}>🌐 {l}</span>
@@ -422,7 +424,7 @@ export default function ExpertsPage() {
 
               {/* Contact */}
               <div>
-                <div style={{ fontSize: 11, fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 8 }}>Contact</div>
+                <div style={{ fontSize: 11, fontWeight: 700, color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 8 }}>{t.experts.contact}</div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                   {[
                     { icon: "💬", label: "Telegram", value: selected.telegram },

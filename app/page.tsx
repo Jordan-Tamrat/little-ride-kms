@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { ISSUES, Issue } from "./data";
+import { useT } from "./lang-context";
 
 const STORAGE_KEY = "kms_issues_v1";
 
@@ -13,6 +14,7 @@ const STATUS_STYLE: Record<string, { bg: string; color: string }> = {
 };
 
 export default function Dashboard() {
+  const { t } = useT();
   const [issues, setIssues] = useState<Issue[]>(ISSUES);
 
   // Read live data from localStorage (same key the issues page writes to)
@@ -55,24 +57,24 @@ export default function Dashboard() {
         <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 8 }}>
           <img src="/logo.svg" alt="logo" style={{ width: 48, height: 48, borderRadius: "50%", objectFit: "cover", background: "#fff" }} />
           <div>
-            <h1 style={{ margin: 0, fontSize: 24, fontWeight: 700, color: "#0f172a" }}>Little Ride Ethiopia</h1>
-            <p style={{ margin: 0, color: "#64748b", fontSize: 14 }}>Knowledge Management System — Operations Dashboard</p>
+            <h1 style={{ margin: 0, fontSize: 24, fontWeight: 700, color: "#0f172a" }}>{t.dashboard.title}</h1>
+            <p style={{ margin: 0, color: "#64748b", fontSize: 14 }}>{t.dashboard.subtitle}</p>
           </div>
         </div>
         <div style={{ background: "#fffbeb", border: "1px solid #fde68a", borderRadius: 10, padding: "12px 18px", marginTop: 12, fontSize: 13, color: "#92400e", maxWidth: 720 }}>
-          <strong>About this system:</strong> This KMS centralizes operational knowledge for Little Ride Ethiopia, replacing informal Telegram threads and Google Sheets. It provides a single source of truth for support issues, lessons learned, driver information, and standard procedures.
+          <strong>{t.dashboard.aboutLabel}</strong> {t.dashboard.about}
         </div>
       </div>
 
       {/* Stats */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: 14, marginBottom: 28 }}>
         {[
-          { label: "Total Issues",  value: total,     color: "#3b82f6", bg: "#eff6ff" },
-          { label: "Resolved",      value: resolved,  color: "#16a34a", bg: "#dcfce7" },
-          { label: "Open",          value: open,      color: "#ca8a04", bg: "#fef9c3" },
-          { label: "Pending",       value: pending,   color: "#dc2626", bg: "#fee2e2" },
-          { label: "Escalated",     value: escalated, color: "#7c3aed", bg: "#ede9fe" },
-          { label: "Closed",        value: closed,    color: "#475569", bg: "#f1f5f9" },
+          { label: t.dashboard.totalIssues, value: total,     color: "#3b82f6", bg: "#eff6ff" },
+          { label: t.dashboard.resolved,    value: resolved,  color: "#16a34a", bg: "#dcfce7" },
+          { label: t.dashboard.open,        value: open,      color: "#ca8a04", bg: "#fef9c3" },
+          { label: t.dashboard.pending,     value: pending,   color: "#dc2626", bg: "#fee2e2" },
+          { label: t.dashboard.escalated,   value: escalated, color: "#7c3aed", bg: "#ede9fe" },
+          { label: t.dashboard.closed,      value: closed,    color: "#475569", bg: "#f1f5f9" },
         ].map(s => (
           <div key={s.label} className="stat-card" style={{ borderTop: `3px solid ${s.color}` }}>
             <div style={{ fontSize: 28, fontWeight: 700, color: s.color }}>{s.value}</div>
@@ -87,7 +89,7 @@ export default function Dashboard() {
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginBottom: 28 }}>
         {/* Issues by Type */}
         <div className="section-card">
-          <h3 style={{ margin: "0 0 16px", fontSize: 15, fontWeight: 600, color: "#1e293b" }}>Issues by Type</h3>
+          <h3 style={{ margin: "0 0 16px", fontSize: 15, fontWeight: 600, color: "#1e293b" }}>{t.dashboard.issuesByType}</h3>
           {Object.entries(byType)
             .sort((a, b) => b[1] - a[1])
             .map(([type, count]) => (
@@ -106,8 +108,8 @@ export default function Dashboard() {
         {/* Recent Activity */}
         <div className="section-card">
           <h3 style={{ margin: "0 0 16px", fontSize: 15, fontWeight: 600, color: "#1e293b" }}>
-            Recent Activity
-            <span style={{ marginLeft: 8, fontSize: 11, fontWeight: 500, color: "#94a3b8" }}>latest {recentIssues.length} issues</span>
+            {t.dashboard.recentActivity}
+            <span style={{ marginLeft: 8, fontSize: 11, fontWeight: 500, color: "#94a3b8" }}>{t.dashboard.latest} {recentIssues.length} {t.dashboard.issues}</span>
           </h3>
           {recentIssues.map(issue => {
             const ss = STATUS_STYLE[issue.issueStatus] ?? STATUS_STYLE.Open;
@@ -133,15 +135,15 @@ export default function Dashboard() {
 
       {/* Quick Links */}
       <div className="section-card">
-        <h3 style={{ margin: "0 0 16px", fontSize: 15, fontWeight: 600, color: "#1e293b" }}>Quick Access</h3>
+        <h3 style={{ margin: "0 0 16px", fontSize: 15, fontWeight: 600, color: "#1e293b" }}>{t.dashboard.quickAccess}</h3>
         <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
           {[
-            { href: "/issues",       label: "🗂 View All Issues",     color: "#3b82f6" },
-            { href: "/lessons",      label: "📚 Lessons Learned",     color: "#16a34a" },
-            { href: "/guidelines",   label: "📋 Support Guidelines",  color: "#f59e0b" },
-            { href: "/driver-support", label: "🚗 Driver Info",       color: "#8b5cf6" },
-            { href: "/multilingual", label: "🌐 Amharic Glossary",    color: "#ec4899" },
-            { href: "/experts",      label: "🧑💼 Expert Locator",    color: "#0891b2" },
+            { href: "/issues",         label: t.dashboard.links.issues,       color: "#3b82f6" },
+            { href: "/lessons",         label: t.dashboard.links.lessons,      color: "#16a34a" },
+            { href: "/guidelines",      label: t.dashboard.links.guidelines,   color: "#f59e0b" },
+            { href: "/driver-support",  label: t.dashboard.links.driverSupport,color: "#8b5cf6" },
+            { href: "/multilingual",    label: t.dashboard.links.multilingual, color: "#ec4899" },
+            { href: "/experts",         label: t.dashboard.links.experts,      color: "#0891b2" },
           ].map(q => (
             <a key={q.href} href={q.href} style={{
               background: "#f8fafc", border: `1px solid ${q.color}30`,

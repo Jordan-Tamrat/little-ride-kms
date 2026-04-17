@@ -1,10 +1,12 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useT } from "../lang-context";
 
 export default function DriverPortal() {
   const router = useRouter();
   const [hydrated, setHydrated] = useState(false);
+  const { t } = useT();
 
   useEffect(() => {
     const role = localStorage.getItem("kms_role");
@@ -31,8 +33,8 @@ export default function DriverPortal() {
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <img src="/logo.svg" alt="logo" style={{ width: 36, height: 36, borderRadius: "50%", background: "#fff" }} />
           <div>
-            <div style={{ color: "#818cf8", fontWeight: 700, fontSize: 14 }}>Driver Portal</div>
-            <div style={{ color: "#475569", fontSize: 11 }}>Little Ride Ethiopia</div>
+            <div style={{ color: "#818cf8", fontWeight: 700, fontSize: 14 }}>{t.driverPortal.portalLabel}</div>
+            <div style={{ color: "#475569", fontSize: 11 }}>{t.driverPortal.company}</div>
           </div>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
@@ -52,15 +54,13 @@ export default function DriverPortal() {
       <div style={{ maxWidth: 900, margin: "0 auto", padding: "28px 24px" }}>
         {/* Welcome */}
         <div style={{ background: "linear-gradient(135deg,#4f46e5,#7c3aed)", borderRadius: 16, padding: "24px 28px", marginBottom: 28, color: "#fff" }}>
-          <div style={{ fontSize: 22, fontWeight: 800, marginBottom: 6 }}>Welcome, Driver 👋</div>
-          <div style={{ fontSize: 14, color: "rgba(255,255,255,0.75)" }}>
-            Your daily information hub — fuel prices, road alerts, tips, and support contacts.
-          </div>
+          <div style={{ fontSize: 22, fontWeight: 800, marginBottom: 6 }}>{t.driverPortal.welcome}</div>
+          <div style={{ fontSize: 14, color: "rgba(255,255,255,0.75)" }}>{t.driverPortal.welcomeSub}</div>
         </div>
 
         {/* Fuel Prices */}
         <div style={{ background: "#fff", borderRadius: 14, border: "1px solid #f1f5f9", padding: "22px 24px", marginBottom: 20, boxShadow: "0 1px 4px rgba(0,0,0,0.06)" }}>
-          <h2 style={{ margin: "0 0 16px", fontSize: 16, fontWeight: 700, color: "#1e293b", display: "flex", alignItems: "center", gap: 8 }}>⛽ Current Fuel Prices</h2>
+          <h2 style={{ margin: "0 0 16px", fontSize: 16, fontWeight: 700, color: "#1e293b", display: "flex", alignItems: "center", gap: 8 }}>{t.driverPortal.fuel}</h2>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }}>
             {[
               { type: "Petrol — ቤንዚን", price: "142.41 ETB/L", icon: "🟢", note: "Petrol stations: Total, NOC, Libya Oil" },
@@ -85,7 +85,7 @@ export default function DriverPortal() {
 
         {/* Road Conditions */}
         <div style={{ background: "#fff", borderRadius: 14, border: "1px solid #f1f5f9", padding: "22px 24px", marginBottom: 20, boxShadow: "0 1px 4px rgba(0,0,0,0.06)" }}>
-          <h2 style={{ margin: "0 0 16px", fontSize: 16, fontWeight: 700, color: "#1e293b", display: "flex", alignItems: "center", gap: 8 }}>🛣️ Road Conditions & Alerts</h2>
+          <h2 style={{ margin: "0 0 16px", fontSize: 16, fontWeight: 700, color: "#1e293b", display: "flex", alignItems: "center", gap: 8 }}>{t.driverPortal.road}</h2>
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             {[
               { area: "Bole Road (Airport → Edna Mall)", status: "Construction", severity: "high", note: "Lane closures 7 AM–6 PM. Use Cameroon St as alternative." },
@@ -112,7 +112,7 @@ export default function DriverPortal() {
 
         {/* Driver Tips */}
         <div style={{ background: "#fff", borderRadius: 14, border: "1px solid #f1f5f9", padding: "22px 24px", marginBottom: 20, boxShadow: "0 1px 4px rgba(0,0,0,0.06)" }}>
-          <h2 style={{ margin: "0 0 16px", fontSize: 16, fontWeight: 700, color: "#1e293b", display: "flex", alignItems: "center", gap: 8 }}>💡 Driver Tips</h2>
+          <h2 style={{ margin: "0 0 16px", fontSize: 16, fontWeight: 700, color: "#1e293b", display: "flex", alignItems: "center", gap: 8 }}>{t.driverPortal.tips}</h2>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 12 }}>
             {[
               { icon: "📱", title: "Keep App Updated", tip: "Always use the latest driver app version. Enable auto-update in Play Store for GPS and bug fixes." },
@@ -133,8 +133,8 @@ export default function DriverPortal() {
 
         {/* Pricing */}
         <div style={{ background: "#fff", borderRadius: 14, border: "1px solid #f1f5f9", padding: "22px 24px", marginBottom: 20, boxShadow: "0 1px 4px rgba(0,0,0,0.06)" }}>
-          <h2 style={{ margin: "0 0 4px", fontSize: 16, fontWeight: 700, color: "#1e293b", display: "flex", alignItems: "center", gap: 8 }}>💰 Fare Structure</h2>
-          <p style={{ margin: "0 0 20px", fontSize: 13, color: "#64748b" }}>All fares in ETB. Retail = standard app fare · Corporate = business account fare.</p>
+          <h2 style={{ margin: "0 0 4px", fontSize: 16, fontWeight: 700, color: "#1e293b", display: "flex", alignItems: "center", gap: 8 }}>{t.driverPortal.pricing}</h2>
+          <p style={{ margin: "0 0 20px", fontSize: 13, color: "#64748b" }}>{t.driverPortal.pricingSubtitle}</p>
           {([
             { type: "Basic", color: "#6366f1", rows: [["Per KM (Day)","24","24"],["Per KM (Night)","28","28"],["Per MIN (Day)","3","3"],["Per MIN (Night)","3","3"],["Minimum Fare","200","200"],["Base Fare","160","160"],["Commission","5%","7%"]] },
             { type: "Comfort +", color: "#0891b2", rows: [["Per KM (Day)","27","27"],["Per KM (Night)","30","30"],["Per MIN (Day)","3","3"],["Per MIN (Night)","3","3"],["Minimum Fare","250","250"],["Base Fare","180","180"],["Commission","5%","7%"]] },
@@ -151,9 +151,9 @@ export default function DriverPortal() {
               <table style={{ width: "100%", borderCollapse: "collapse", background: "#fff" }}>
                 <thead>
                   <tr style={{ background: `${v.color}10` }}>
-                    <th style={{ padding: "7px 12px", textAlign: "left", fontSize: 11, fontWeight: 700, color: v.color, borderBottom: `1px solid ${v.color}20` }}>Rate</th>
-                    <th style={{ padding: "7px 12px", textAlign: "right", fontSize: 11, fontWeight: 700, color: v.color, borderBottom: `1px solid ${v.color}20` }}>Retail</th>
-                    <th style={{ padding: "7px 12px", textAlign: "right", fontSize: 11, fontWeight: 700, color: v.color, borderBottom: `1px solid ${v.color}20` }}>Corporate</th>
+                    <th style={{ padding: "7px 12px", textAlign: "left", fontSize: 11, fontWeight: 700, color: v.color, borderBottom: `1px solid ${v.color}20` }}>{t.driverPortal.rate}</th>
+                    <th style={{ padding: "7px 12px", textAlign: "right", fontSize: 11, fontWeight: 700, color: v.color, borderBottom: `1px solid ${v.color}20` }}>{t.driverPortal.retail}</th>
+                    <th style={{ padding: "7px 12px", textAlign: "right", fontSize: 11, fontWeight: 700, color: v.color, borderBottom: `1px solid ${v.color}20` }}>{t.driverPortal.corporate}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -172,7 +172,7 @@ export default function DriverPortal() {
 
         {/* Support Contacts */}
         <div style={{ background: "#fff", borderRadius: 14, border: "1px solid #f1f5f9", padding: "22px 24px", boxShadow: "0 1px 4px rgba(0,0,0,0.06)" }}>
-          <h2 style={{ margin: "0 0 16px", fontSize: 16, fontWeight: 700, color: "#1e293b", display: "flex", alignItems: "center", gap: 8 }}>📞 Support & Emergency Contacts</h2>
+          <h2 style={{ margin: "0 0 16px", fontSize: 16, fontWeight: 700, color: "#1e293b", display: "flex", alignItems: "center", gap: 8 }}>{t.driverPortal.contacts}</h2>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 12 }}>
             {[
               { icon: "📞", label: "24/7 Customer Support", value: "7933", sub: "+251 11 557 1407", color: "#16a34a" },

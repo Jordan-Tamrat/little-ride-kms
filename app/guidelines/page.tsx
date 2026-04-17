@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { useT } from "../lang-context";
 
 const GUIDELINES = [
   {
@@ -139,17 +140,18 @@ const DEPT_COLOR: Record<string, string> = {
 };
 
 export default function GuidelinesPage() {
+  const { t } = useT();
   const [expanded, setExpanded] = useState<number | null>(1);
 
   return (
     <div>
       <div style={{ marginBottom: 24 }}>
-        <h1 style={{ margin: "0 0 4px", fontSize: 22, fontWeight: 700, color: "#0f172a" }}>Support Guidelines</h1>
-        <p style={{ margin: 0, color: "#64748b", fontSize: 14 }}>Standard operating procedures for the Little Ride Ethiopia support team</p>
+        <h1 style={{ margin: "0 0 4px", fontSize: 22, fontWeight: 700, color: "#0f172a" }}>{t.guidelines.title}</h1>
+        <p style={{ margin: 0, color: "#64748b", fontSize: 14 }}>{t.guidelines.subtitle}</p>
       </div>
 
       <div style={{ background: "#eff6ff", border: "1px solid #bfdbfe", borderRadius: 10, padding: "12px 18px", marginBottom: 24, fontSize: 13, color: "#1d4ed8" }}>
-        📌 Official procedures for all support agents. Last reviewed: April 2026.
+        {t.guidelines.banner}
       </div>
 
       {GUIDELINES.map(g => {
@@ -173,13 +175,13 @@ export default function GuidelinesPage() {
                 <div style={{ fontWeight: 700, fontSize: 15, color: "#0f172a" }}>{g.title}</div>
                 <div style={{ display: "flex", gap: 8, marginTop: 5, flexWrap: "wrap" }}>
                   <span style={{ background: `${g.slaColor}15`, color: g.slaColor, borderRadius: 999, padding: "2px 10px", fontSize: 11, fontWeight: 700 }}>
-                    ⏱ SLA: {g.sla}
+                    ⏱ {t.guidelines.sla} {g.sla}
                   </span>
                   <span style={{ background: `${deptColor}12`, color: deptColor, borderRadius: 999, padding: "2px 10px", fontSize: 11, fontWeight: 600 }}>
                     {g.department}
                   </span>
                   <span style={{ background: "#f1f5f9", color: "#64748b", borderRadius: 999, padding: "2px 10px", fontSize: 11 }}>
-                    {g.steps.length} steps
+                    {g.steps.length} {t.guidelines.steps}
                   </span>
                 </div>
               </div>
@@ -241,7 +243,7 @@ export default function GuidelinesPage() {
                 <div style={{ marginTop: 8, background: "#fffbeb", border: "1px solid #fde68a", borderRadius: 10, padding: "12px 16px", display: "flex", gap: 10, alignItems: "flex-start" }}>
                   <span style={{ fontSize: 18, flexShrink: 0 }}>📝</span>
                   <div>
-                    <div style={{ fontSize: 12, fontWeight: 700, color: "#92400e", marginBottom: 3 }}>Important Note</div>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: "#92400e", marginBottom: 3 }}>{t.guidelines.importantNote}</div>
                     <div style={{ fontSize: 13, color: "#78350f", lineHeight: 1.6 }}>{g.notes}</div>
                   </div>
                 </div>
