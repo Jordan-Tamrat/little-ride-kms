@@ -1,65 +1,158 @@
-import Image from "next/image";
+"use client";
+import { useState, useEffect } from "react";
+import { ISSUES, Issue } from "./data";
 
-export default function Home() {
+const STORAGE_KEY = "kms_issues_v1";
+
+const STATUS_STYLE: Record<string, { bg: string; color: string }> = {
+  Resolved:  { bg: "#dcfce7", color: "#16a34a" },
+  Open:      { bg: "#fef9c3", color: "#ca8a04" },
+  Pending:   { bg: "#fee2e2", color: "#dc2626" },
+  Escalated: { bg: "#ede9fe", color: "#7c3aed" },
+  Closed:    { bg: "#f1f5f9", color: "#475569" },
+};
+
+export default function Dashboard() {
+  const [issues, setIssues] = useState<Issue[]>(ISSUES);
+
+  // Read live data from localStorage (same key the issues page writes to)
+  useEffect(() => {
+    function load() {
+      try {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) setIssues(JSON.parse(stored) as Issue[]);
+      } catch { /* ignore */ }
+    }
+    load();
+
+    // Also re-read whenever the user navigates back to this tab or the storage changes
+    window.addEventListener("focus", load);
+    window.addEventListener("storage", load);
+    return () => {
+      window.removeEventListener("focus", load);
+      window.removeEventListener("storage", load);
+    };
+  }, []);
+
+  const total     = issues.length;
+  const resolved  = issues.filter(i => i.issueStatus === "Resolved").length;
+  const open      = issues.filter(i => i.issueStatus === "Open").length;
+  const pending   = issues.filter(i => i.issueStatus === "Pending").length;
+  const escalated = issues.filter(i => i.issueStatus === "Escalated").length;
+  const closed    = issues.filter(i => i.issueStatus === "Closed").length;
+
+  const byType: Record<string, number> = {};
+  issues.forEach(i => { byType[i.issueType] = (byType[i.issueType] || 0) + 1; });
+
+  const recentIssues = [...issues]
+    .sort((a, b) => b.id.localeCompare(a.id, undefined, { numeric: true }))
+    .slice(0, 6);
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div>
+      {/* Header */}
+      <div style={{ marginBottom: 28 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 8 }}>
+          <img src="/logo.svg" alt="logo" style={{ width: 48, height: 48, borderRadius: "50%", objectFit: "cover", background: "#fff" }} />
+          <div>
+            <h1 style={{ margin: 0, fontSize: 24, fontWeight: 700, color: "#0f172a" }}>Little Ride Ethiopia</h1>
+            <p style={{ margin: 0, color: "#64748b", fontSize: 14 }}>Knowledge Management System — Operations Dashboard</p>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+        <div style={{ background: "#fffbeb", border: "1px solid #fde68a", borderRadius: 10, padding: "12px 18px", marginTop: 12, fontSize: 13, color: "#92400e", maxWidth: 720 }}>
+          <strong>About this system:</strong> This KMS centralizes operational knowledge for Little Ride Ethiopia, replacing informal Telegram threads and Google Sheets. It provides a single source of truth for support issues, lessons learned, driver information, and standard procedures.
         </div>
-      </main>
+      </div>
+
+      {/* Stats */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: 14, marginBottom: 28 }}>
+        {[
+          { label: "Total Issues",  value: total,     color: "#3b82f6", bg: "#eff6ff" },
+          { label: "Resolved",      value: resolved,  color: "#16a34a", bg: "#dcfce7" },
+          { label: "Open",          value: open,      color: "#ca8a04", bg: "#fef9c3" },
+          { label: "Pending",       value: pending,   color: "#dc2626", bg: "#fee2e2" },
+          { label: "Escalated",     value: escalated, color: "#7c3aed", bg: "#ede9fe" },
+          { label: "Closed",        value: closed,    color: "#475569", bg: "#f1f5f9" },
+        ].map(s => (
+          <div key={s.label} className="stat-card" style={{ borderTop: `3px solid ${s.color}` }}>
+            <div style={{ fontSize: 28, fontWeight: 700, color: s.color }}>{s.value}</div>
+            <div style={{ fontSize: 13, color: "#64748b", marginTop: 4 }}>{s.label}</div>
+            <div style={{ marginTop: 8, background: s.bg, borderRadius: 6, height: 6 }}>
+              <div style={{ background: s.color, borderRadius: 6, height: 6, width: total ? `${(s.value / total) * 100}%` : "0%" }} />
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginBottom: 28 }}>
+        {/* Issues by Type */}
+        <div className="section-card">
+          <h3 style={{ margin: "0 0 16px", fontSize: 15, fontWeight: 600, color: "#1e293b" }}>Issues by Type</h3>
+          {Object.entries(byType)
+            .sort((a, b) => b[1] - a[1])
+            .map(([type, count]) => (
+              <div key={type} style={{ marginBottom: 10 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, marginBottom: 4 }}>
+                  <span style={{ color: "#334155" }}>{type}</span>
+                  <span style={{ fontWeight: 600, color: "#1e293b" }}>{count}</span>
+                </div>
+                <div style={{ background: "#f1f5f9", borderRadius: 4, height: 6 }}>
+                  <div style={{ background: "#fbbf24", borderRadius: 4, height: 6, width: `${(count / total) * 100}%`, transition: "width 0.4s" }} />
+                </div>
+              </div>
+            ))}
+        </div>
+
+        {/* Recent Activity */}
+        <div className="section-card">
+          <h3 style={{ margin: "0 0 16px", fontSize: 15, fontWeight: 600, color: "#1e293b" }}>
+            Recent Activity
+            <span style={{ marginLeft: 8, fontSize: 11, fontWeight: 500, color: "#94a3b8" }}>latest {recentIssues.length} issues</span>
+          </h3>
+          {recentIssues.map(issue => {
+            const ss = STATUS_STYLE[issue.issueStatus] ?? STATUS_STYLE.Open;
+            return (
+              <div key={issue.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", padding: "9px 0", borderBottom: "1px solid #f1f5f9" }}>
+                <div style={{ flex: 1, minWidth: 0, marginRight: 10 }}>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: "#1e293b" }}>#{issue.id} · {issue.issueType}</div>
+                  <div style={{ fontSize: 11, color: "#94a3b8", marginTop: 2 }}>
+                    {issue.raisedBy} · {issue.phone} · {issue.firstResponder}
+                  </div>
+                </div>
+                <div style={{ textAlign: "right", flexShrink: 0 }}>
+                  <span style={{ background: ss.bg, color: ss.color, borderRadius: 999, padding: "2px 9px", fontWeight: 700, fontSize: 11 }}>
+                    {issue.issueStatus}
+                  </span>
+                  <div style={{ fontSize: 11, color: "#94a3b8", marginTop: 3 }}>{issue.date}</div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Quick Links */}
+      <div className="section-card">
+        <h3 style={{ margin: "0 0 16px", fontSize: 15, fontWeight: 600, color: "#1e293b" }}>Quick Access</h3>
+        <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+          {[
+            { href: "/issues",       label: "🗂 View All Issues",     color: "#3b82f6" },
+            { href: "/lessons",      label: "📚 Lessons Learned",     color: "#16a34a" },
+            { href: "/guidelines",   label: "📋 Support Guidelines",  color: "#f59e0b" },
+            { href: "/driver-support", label: "🚗 Driver Info",       color: "#8b5cf6" },
+            { href: "/multilingual", label: "🌐 Amharic Glossary",    color: "#ec4899" },
+            { href: "/experts",      label: "🧑💼 Expert Locator",    color: "#0891b2" },
+          ].map(q => (
+            <a key={q.href} href={q.href} style={{
+              background: "#f8fafc", border: `1px solid ${q.color}30`,
+              borderRadius: 8, padding: "10px 18px", fontSize: 13,
+              fontWeight: 500, color: q.color, textDecoration: "none",
+            }}>
+              {q.label}
+            </a>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

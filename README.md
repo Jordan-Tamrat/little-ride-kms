@@ -1,36 +1,76 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Little Ride Knowledge Management System
 
-## Getting Started
+A full-stack Knowledge Management System (KMS) prototype built for **Little Ride Ethiopia**, a ride-hailing company operating in Addis Ababa.
 
-First, run the development server:
+## 🚀 Live Features
+
+### Staff Portal
+- **Dashboard** — Real-time stats (total, resolved, open, pending, escalated issues) synced from localStorage
+- **Support Issues Database** — Full issue log with inline status updates, edit modal, search & filter, and "Log New Issue" form
+- **Lessons Learned** — Tacit knowledge articles with rich content renderer (steps, causes, insights), category filter, and "Add Lesson" form
+- **Driver Support & Info** — Real fare tables for all 7 vehicle types (Basic, Comfort+, Comfort, Mini Bus, Lady Bug, Parcel, Luxury) with Retail & Corporate columns, live fuel prices, road conditions
+- **Support Guidelines** — Visual step-by-step SOPs with timeline UI, SLA badges, and department color coding
+- **Multilingual Support** — English ↔ Amharic glossary and common support phrases
+- **Expert Locator** — Staff directory with expertise tags, availability status, contact info, and detail panel
+
+### Driver Portal
+- Separate login portal for drivers (not employees)
+- Fuel prices (live from metaappz.com)
+- Road conditions & alerts
+- Fare structure for all vehicle types
+- Driver tips & best practices
+- Real support contacts (7933, +251 11 557 1407, info.ethiopia@little.africa)
+
+## 🔐 Authentication
+- Role-based login: **Staff** vs **Driver**
+- Stored in `localStorage` — prototype demo mode (no password required)
+- Staff sees full KMS sidebar; drivers see only their portal
+
+## 💾 Data Persistence
+- All issue changes (new issues, status updates, edits) persist via `localStorage`
+- Dashboard reads live data and updates on tab focus
+- Lessons learned also persisted via `localStorage`
+
+## 🛠 Tech Stack
+- **Next.js 15** (App Router)
+- **TypeScript**
+- **Tailwind CSS**
+- No external UI libraries — all components hand-built
+
+## 📦 Getting Started
 
 ```bash
+cd app
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000/login](http://localhost:3000/login) and select a portal.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 📁 Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+app/
+├── app/
+│   ├── page.tsx              # Dashboard
+│   ├── layout.tsx            # Sidebar + auth guard
+│   ├── data.ts               # Seed data & types
+│   ├── login/                # Login page
+│   ├── issues/               # Support Issues Database
+│   ├── lessons/              # Lessons Learned
+│   ├── driver-support/       # Driver Support & Info (staff view)
+│   ├── driver-portal/        # Driver Portal (driver view)
+│   ├── guidelines/           # Support Guidelines
+│   ├── multilingual/         # Multilingual Support
+│   └── experts/              # Expert Locator
+└── public/
+    └── logo.svg
+```
 
-## Learn More
+## 🏢 About Little Ride Ethiopia
 
-To learn more about Next.js, take a look at the following resources:
+Little Ride Ethiopia is a ride-hailing company based in Addis Ababa. This KMS was designed to replace informal knowledge sharing via Telegram and Google Sheets, centralizing operational knowledge for support agents, operations staff, and drivers.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Built as a university project demonstrating Knowledge Management System design principles.
