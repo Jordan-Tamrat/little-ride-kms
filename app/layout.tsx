@@ -23,6 +23,7 @@ function Sidebar({ collapsed, setCollapsed, onLogout }: {
     { href: "/guidelines",     label: t.nav.guidelines,    icon: "📋" },
     { href: "/multilingual",   label: t.nav.multilingual,  icon: "🌐" },
     { href: "/experts",        label: t.nav.experts,       icon: "🧑💼" },
+    { href: "/map",            label: t.nav.map,           icon: "🗺️" },
   ];
 
   return (
