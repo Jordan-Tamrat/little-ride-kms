@@ -144,6 +144,7 @@ export default function Dashboard() {
             { href: "/driver-support",  label: t.dashboard.links.driverSupport,color: "#8b5cf6" },
             { href: "/multilingual",    label: t.dashboard.links.multilingual, color: "#ec4899" },
             { href: "/experts",         label: t.dashboard.links.experts,      color: "#0891b2" },
+            { href: "/map",             label: t.dashboard.links.map,          color: "#16a34a" },
           ].map(q => (
             <a key={q.href} href={q.href} style={{
               background: "#f8fafc", border: `1px solid ${q.color}30`,
